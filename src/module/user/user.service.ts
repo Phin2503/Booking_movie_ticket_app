@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { RegisterDto } from './dtos/register.dto';
+
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { Permission } from './helper/checkPermission.helper';
 import { PaginationDTO } from 'src/generic/pagination.dto';
@@ -13,18 +13,6 @@ export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
-
-  findByEmail(email: string) {
-    return this.userRepository.findOneBy({ email });
-  }
-
-  create(requestBody: RegisterDto) {
-    const user = this.userRepository.create(requestBody);
-    user.createAt = new Date();
-
-    console.log(user);
-    return this.userRepository.save(user);
-  }
 
   findAll(pagination: PaginationDTO) {
     return this.userRepository.find({
