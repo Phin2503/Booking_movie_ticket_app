@@ -6,7 +6,7 @@ import { CreateMovieDTO } from './dtos/create.dto';
 import { UpdateMovieDto } from './dtos/update.dto';
 import { PaginationDTO } from 'src/generic/pagination.dto';
 import { DEFAULT_PAGE_SIZE } from 'src/utils/constants';
-import { CloudinaryService } from 'src/configs/cloudinary.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class MovieService {

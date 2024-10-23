@@ -1,5 +1,5 @@
-import { Movie } from 'src/movie/movie.entity';
-import { Theater } from 'src/theater/theater.entity';
+import { Movie } from 'src/module/movie/movie.entity';
+import { Theater } from 'src/module/theater/theater.entity';
 import {
   Column,
   CreateDateColumn,

@@ -1,4 +1,4 @@
-import { Showtime } from 'src/showtime/showtime.entity';
+import { Showtime } from 'src/module/showtime/showtime.entity';
 import {
   Column,
   CreateDateColumn,

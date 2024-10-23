@@ -4,20 +4,23 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RegisterDto } from './dtos/register.dto';
-import { UserService } from './user.service';
+import { RegisterDto } from '../dtos/register.dto';
+import { UserService } from '../user.service';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from './dtos/login.dto';
+import { LoginDto } from '../dtos/login.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectQueue('send-mail')
+    private sendMail: Queue,
     private jwtService: JwtService,
     private userService: UserService,
   ) {}
 
   async register(requestBody: RegisterDto) {
-    requestBody.sanitize();
     //check email
     const userByEmail = await this.userService.findByEmail(requestBody.email);
     if (userByEmail) {
@@ -34,27 +37,23 @@ export class AuthService {
     //generate jwt token
     const payload = {
       id: userSaved.id,
-      fullName: userSaved.fullName,
-      username: userSaved.username,
-      phoneNumber: userSaved.phoneNumber,
-      email: userSaved.email,
-      dateOfBirth: userSaved.dateOfBirth,
     };
 
-    const access_token = await this.jwtService.signAsync(payload, {
+    const verifyToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET,
     });
 
-    return {
-      msg: 'User haas been created !',
-      payload,
-      access_token,
-    };
+    const mailURL = process.env.MAIL_URL;
+
+    await this.sendMail.add('register', {
+      to: requestBody.email,
+      name: requestBody.fullName,
+      verifyToken: verifyToken,
+      mailURL: mailURL,
+    });
   }
 
   async login(requestBody: LoginDto) {
-    requestBody.sanitize();
-
     const currentAccount = await this.userService.findByEmail(
       requestBody.email,
     );

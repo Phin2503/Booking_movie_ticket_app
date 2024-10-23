@@ -4,10 +4,15 @@ import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
+import { AuthService } from './guards/auth.service';
+import { EmailConsumers } from 'src/module/consumer/email.consumer';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
+    BullModule.registerQueue({
+      name: 'send-mail',
+    }),
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
       global: true,
@@ -15,7 +20,7 @@ import { AuthService } from './auth.service';
     }),
   ],
   controllers: [UserController],
-  providers: [UserService, AuthService],
+  providers: [UserService, AuthService, EmailConsumers],
   exports: [TypeOrmModule],
 })
 export class UserModule {}

@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { IsDate, IsOptional } from 'class-validator';
 
-import { ROLES } from 'src/roles/roles';
+import { ROLES } from 'src/module/roles/roles';
 import {
   Column,
   Entity,
@@ -60,4 +60,10 @@ export class User {
 
   @Column({ default: ROLES.USER })
   role: ROLES;
+
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
+  isVerify: boolean;
 }

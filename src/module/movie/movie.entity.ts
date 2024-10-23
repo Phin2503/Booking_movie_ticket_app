@@ -1,4 +1,4 @@
-import { Showtime } from 'src/showtime/showtime.entity';
+import { Showtime } from 'src/module/showtime/showtime.entity';
 import {
   Column,
   CreateDateColumn,
@@ -16,6 +16,7 @@ export class Movie {
   @Column({
     nullable: false,
     length: 100,
+    unique: true,
   })
   title: string;
 

@@ -10,13 +10,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthService } from './auth.service';
+import { AuthService } from './guards/auth.service';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { CurrentUser } from './decorators/currentUser.decorator';
 import { User } from './user.entity';
-import { RoleGuard } from 'src/guards/role.guard';
+import { RoleGuard } from './guards/role.guard';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { PaginationDTO } from 'src/generic/pagination.dto';
 
