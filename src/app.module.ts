@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './module/user/user.module';
+import { UserModule } from './modules/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MovieModule } from './module/movie/movie.module';
-import { TheaterModule } from './module/theater/theater.module';
-import { ShowtimeModule } from './module/showtime/showtime.module';
-import { SeatModule } from './module/seat/seat.module';
-import { SeatReservationModule } from './module/seat_reservation/seat_reservation.module';
-import { ShowtimeSeatModule } from './module/showtime_seat/showtime_seat.module';
-import { TicketModule } from './module/ticket/ticket.module';
-import { PaymentModule } from './module/payment/payment.module';
-import { ReviewModule } from './module/review/review.module';
-import { TransactionHistoryModule } from './module/transaction_history/transaction_history.module';
-import { VnpayTransactionModule } from './module/vnpay_transaction/vnpay_transaction.module';
+import { MovieModule } from './modules/movie/movie.module';
+import { TheaterModule } from './modules/theater/theater.module';
+import { ShowtimeModule } from './modules/showtime/showtime.module';
+import { SeatModule } from './modules/seat/seat.module';
+import { SeatReservationModule } from './modules/seat_reservation/seat_reservation.module';
+import { ShowtimeSeatModule } from './modules/showtime_seat/showtime_seat.module';
+import { TicketModule } from './modules/ticket/ticket.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { ReviewModule } from './modules/review/review.module';
+import { TransactionHistoryModule } from './modules/transactionHistory/transaction_history.module';
+import { VnpayTransactionModule } from './modules/vnpayTransaction/vnpay_transaction.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { UploadController } from './cloudinary/upload.controller';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
@@ -22,6 +22,10 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { BullModule } from '@nestjs/bull';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailConfig } from './configs/mail.config';
+import { DatabaseConfig } from './configs/database.config';
+import { TheaterComplexModule } from './modules/theaterComplex/theaterComplex.module';
+import { TheaterComplexController } from './modules/theaterComplex/theaterComplex.controller';
+import { TheaterComplexService } from './modules/theaterComplex/theaterComplex.service';
 
 @Module({
   imports: [
@@ -37,17 +41,7 @@ import { MailConfig } from './configs/mail.config';
     CloudinaryModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env'] }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get('DB_HOST'),
-        port: +configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
-      }),
+      useFactory: DatabaseConfig,
       inject: [ConfigService],
     }),
     UserModule,
@@ -62,8 +56,9 @@ import { MailConfig } from './configs/mail.config';
     ReviewModule,
     TransactionHistoryModule,
     VnpayTransactionModule,
+    TheaterComplexModule,
   ],
-  controllers: [AppController, UploadController],
-  providers: [AppService, CloudinaryService],
+  controllers: [AppController, UploadController, TheaterComplexController],
+  providers: [AppService, CloudinaryService, TheaterComplexService],
 })
 export class AppModule {}
