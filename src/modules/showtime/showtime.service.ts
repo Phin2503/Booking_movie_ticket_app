@@ -12,6 +12,8 @@ import { Movie } from '../movie/movie.entity';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { CreateShowtimeDto } from './dtos/create.dto';
+import { DEFAULT_PAGE_SIZE } from 'src/utils/constants';
+import { updateShowtimeDto } from './dtos/update.dto';
 
 @Injectable()
 export class ShowtimeService {
@@ -34,7 +36,6 @@ export class ShowtimeService {
 
     const showtimeStart = new Date(requestBody.showtime_start);
 
-    // Kiểm tra xem thời gian bắt đầu có hợp lệ không
     if (isNaN(showtimeStart.getTime())) {
       throw new BadRequestException('Invalid date value for showtime_start.');
     }
@@ -63,30 +64,69 @@ export class ShowtimeService {
 
     if (existingShowtime.length > 0)
       throw new BadRequestException(
-        "Showtime overlaps with another schedule in this theater.',",
+        'Showtime overlaps with another schedule in this theater !',
       );
 
-    const newShowtime = this.showtimeRepository.create({
-      showtime_start: this.convertUTCToHCM(requestBody.showtime_start),
-      showtime_end: this.convertUTCToHCM(showtimeEnd),
-      movie,
-      theater,
-    });
-
-    return this.showtimeRepository.save(newShowtime);
+    try {
+      const newShowtime = this.showtimeRepository.create({
+        showtime_start: this.convertUTCToHCM(requestBody.showtime_start),
+        showtime_end: this.convertUTCToHCM(showtimeEnd),
+        movie,
+        theater,
+      });
+      return this.showtimeRepository.save(newShowtime);
+    } catch (err) {
+      throw new BadRequestException('Something went wrong !' + err);
+    }
   }
 
   convertUTCToHCM(utcDate: Date): Date {
-    // Nếu utcDate là chuỗi, chuyển đổi sang Date
     const date = typeof utcDate === 'string' ? new Date(utcDate) : utcDate;
 
-    // Kiểm tra xem date có hợp lệ không
     if (isNaN(date.getTime())) {
       throw new Error('Invalid date value.');
     }
 
-    // Thêm 7 giờ cho múi giờ Việt Nam
     const hcmDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
     return hcmDate;
+  }
+
+  async getAll(pagination) {
+    return await this.showtimeRepository.find({
+      skip: pagination?.skip || 0,
+      take: pagination?.limit ?? DEFAULT_PAGE_SIZE,
+    });
+  }
+
+  async getById(id) {
+    const showtime = await this.showtimeRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['theater', 'movie'],
+    });
+
+    if (!showtime) {
+      throw new NotFoundException('Not found showtime !');
+    }
+
+    return showtime;
+  }
+
+  async deleteById(id) {
+    await this.getById(id);
+    await this.showtimeRepository.delete(id);
+    return 'Delete Successfully !';
+  }
+
+  async updateShowtime(id: number, requestBody: updateShowtimeDto) {
+    const oldShowtime = await this.getById(id);
+    const newShowtime: Showtime = { ...oldShowtime, ...requestBody };
+    try {
+      await this.showtimeRepository.update(id, newShowtime);
+      return newShowtime;
+    } catch (err) {
+      throw new BadRequestException('Something went wrong !' + err);
+    }
   }
 }
