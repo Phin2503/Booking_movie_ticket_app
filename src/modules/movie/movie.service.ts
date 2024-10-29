@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, UploadedFile } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UploadedFile,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Movie } from './movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,6 +25,14 @@ export class MovieService {
     requestBody: CreateMovieDTO,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    const existingMovie = await this.movieRepository.findOneBy({
+      title: requestBody.title,
+    });
+
+    if (existingMovie) {
+      throw new BadRequestException('Name movie already exists !! try again !');
+    }
+
     const urlImg = await this.cloudinaryService.uploadImage(file);
 
     requestBody.background_image_url = urlImg.url;

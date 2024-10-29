@@ -25,7 +25,6 @@ export class MovieController {
     @Body() requestBody: CreateMovieDTO,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(requestBody, file);
     return this.movieService.create(requestBody, file);
   }
 
