@@ -25,8 +25,8 @@ export class TheaterService {
     return this.theaterRepository.save(newTheater);
   }
 
-  getAll(pagination) {
-    return this.theaterRepository.find({
+  async getAll(pagination) {
+    return await this.theaterRepository.find({
       skip: pagination.skip,
       take: pagination.limit ?? DEFAULT_PAGE_SIZE,
     });
