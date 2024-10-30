@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TheaterComplex } from '../theaterComplex/theaterComplex.entity';
+import { Seat } from '../seat/seat.entity';
 
 @Entity()
 export class Theater {
@@ -41,4 +42,7 @@ export class Theater {
 
   @ManyToOne(() => TheaterComplex, (TheaterComplex) => TheaterComplex.theaters)
   theater_complex: TheaterComplex;
+
+  @OneToMany(() => Seat, (Seat) => Seat.theater)
+  seats: Seat[];
 }

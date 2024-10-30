@@ -9,7 +9,6 @@ import { TheaterModule } from './modules/theater/theater.module';
 import { ShowtimeModule } from './modules/showtime/showtime.module';
 import { SeatModule } from './modules/seat/seat.module';
 import { SeatReservationModule } from './modules/seat_reservation/seat_reservation.module';
-import { ShowtimeSeatModule } from './modules/showtime_seat/showtime_seat.module';
 import { TicketModule } from './modules/ticket/ticket.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { ReviewModule } from './modules/review/review.module';
@@ -50,7 +49,7 @@ import { TheaterComplexService } from './modules/theaterComplex/theaterComplex.s
     ShowtimeModule,
     SeatModule,
     SeatReservationModule,
-    ShowtimeSeatModule,
+
     TicketModule,
     PaymentModule,
     ReviewModule,
