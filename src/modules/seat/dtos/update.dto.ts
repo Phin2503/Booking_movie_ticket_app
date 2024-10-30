@@ -9,15 +9,17 @@ import { SEAT_TYPE } from 'src/modules/seat_type/seat_type';
 
 export class UpdateSeatDto {
   @IsString()
-  @IsNotEmpty()
-  @Length(2, 10)
+  @IsNotEmpty({ message: 'Seat number cannot be empty.' })
+  @Length(2, 10, {
+    message: 'Seat number must be between 2 and 10 characters.',
+  })
   seat_number: string;
 
-  @IsNotEmpty()
-  @IsEnum(SEAT_TYPE)
+  @IsNotEmpty({ message: 'Seat type is required.' })
+  @IsEnum(SEAT_TYPE, { message: 'Invalid seat type.' })
   seat_type: SEAT_TYPE;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsNotEmpty({ message: 'Theater ID is required.' })
+  @IsNumber({}, { message: 'Theater ID must be a number.' })
   theaterId: number;
 }
